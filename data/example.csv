@@ -1,0 +1,21 @@
+﻿Type,X,Y,Service Time ,Early,Latest,Demand,Origin/Dest
+Depot,2,33,0,,,,
+Depot,-35,-18,0,,,,
+Satellite,20,7,10,,,,
+Satellite,-12,17,10,,,,
+Satellite,25,-1,10,,,,
+Delivery,4,10,10,54,74,20,2
+Delivery,-22,-3,10,90,110,20,2
+Delivery,-7,-8,10,78,98,20,1
+Delivery,-1,-7,10,236,256,20,2
+Delivery,-8,12,10,30,50,20,1
+Delivery,-14,9,10,220,240,20,1
+Delivery,-1,1,10,232,252,20,2
+Delivery,-8,18,10,133,153,10,2
+Pickup,-4,-6,10,243,263,20,2
+Pickup,-2,26,10,92,112,10,1
+Pickup,7,-2,10,193,213,10,1
+Pickup,0,2,10,59,79,10,2
+Pickup,-28,1,10,152,172,20,1
+Pickup,6,-1,10,84,104,10,1
+Pickup,10,-19,10,180,200,10,2
