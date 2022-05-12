@@ -17,10 +17,8 @@ public class Route {
         int lastIdx = 0;
         for (int i = 1; i < nodes.size(); i++) {
             Visit prev = tempVisits.get(lastIdx);
-            if (prev.canVisitNext(nodes.get(i))) {
-                tempVisits.add(prev.nextVisit(nodes.get(i)));
-                lastIdx++;
-            }
+            tempVisits.add(prev.nextVisit(nodes.get(i)));
+            lastIdx++;
         }
         visits = Collections.unmodifiableList(tempVisits);
     }
@@ -39,8 +37,8 @@ public class Route {
 
     @Override
     public String toString() {
-        return visits.stream()
+        return String.format("Route[%s]", visits.stream()
                 .map(Visit::toString)
-                .collect(Collectors.joining("\n"));
+                .collect(Collectors.joining(",\n")));
     }
 }

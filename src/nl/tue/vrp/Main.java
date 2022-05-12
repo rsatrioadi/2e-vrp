@@ -1,9 +1,6 @@
 package nl.tue.vrp;
 
-import nl.tue.vrp.model.Node;
-import nl.tue.vrp.model.Route;
-import nl.tue.vrp.model.Vehicle;
-import nl.tue.vrp.model.World;
+import nl.tue.vrp.model.*;
 
 import java.util.*;
 
@@ -51,19 +48,13 @@ public class Main {
 
         // find each customer's nearest satellite
 
-        Map<Node, List<Node>> satelliteToCustomer = new HashMap<>();
-        // - for each customer...
         for (Node cust: customers) {
             // - find nearest satellite
-            Node nearestSat = satellites.stream()
+            Node.Satellite nearestSat = satellites.stream()
+                    .map(s -> (Node.Satellite) s)
                     .reduce((n1, n2) -> world.distance(cust, n1) < world.distance(cust, n2) ? n1 : n2)
                     .get();
-            // - if there is no customer list for the satellite, make a new (empty) list
-            if (!satelliteToCustomer.containsKey(nearestSat)) {
-                satelliteToCustomer.put(nearestSat, new ArrayList<>());
-            }
-            // - add this customer to the list
-            satelliteToCustomer.get(nearestSat).add(cust);
+            nearestSat.addCustomer((Node.Customer) cust);
         }
 
         // print each satellite's customers
@@ -72,22 +63,44 @@ public class Main {
         for (Node sat: satellites) {
             System.out.printf("# Customers for %s:%n", sat);
             // - if there are customers assigned to it, print them all; otherwise print [none]
-            if (satelliteToCustomer.containsKey(sat)) {
-                satelliteToCustomer.get(sat).forEach(System.out::println);
+            var myCustomers = ((Node.Satellite)sat).listCustomers();
+            if (!myCustomers.isEmpty()) {
+                myCustomers.forEach(System.out::println);
             } else {
                 System.out.println("[none]");
             }
             System.out.println();
         }
 
-        // dummy routing: 1 vehicle, visit all customers ordered by id (not shortest path),
-        // skip customer if vehicle capacity can't meet its demand
+        // dummy routing
 
-        for (Node sat: satelliteToCustomer.keySet()) {
+        for (Node sat: satellites) {
             System.out.printf("# Route for %s:%n", sat);
-            Vehicle veh = new Vehicle(sat.getId()*100+1, 100);
-            Route route = new Route(veh, satelliteToCustomer.get(sat));
-            System.out.println(route);
+            Vehicle v1 = new Vehicle(sat.getId() * 100 + 1, 40);
+            Vehicle v2 = new Vehicle(sat.getId() * 100 + 2, 20);
+            Routes routes = new Routes(
+                    List.of(v1, v2), // available vehicles
+                    ((Node.Satellite) sat).listNodes(), // all nodes to visit (satellite + its customers)
+                    (vs, ns) -> {
+                        List<Route> candidate = new ArrayList<>();
+
+                        List<Node> remainingNodes = new ArrayList<>(ns);
+                        List<Vehicle> remainingVehicles = new ArrayList<>(vs);
+                        while (!remainingNodes.isEmpty() && !remainingVehicles.isEmpty()) {
+                            Vehicle v = remainingVehicles.remove(0);
+                            List<Node> currentRoute = new ArrayList<>();
+                            currentRoute.add(remainingNodes.get(0));
+                            Visit visit = new Visit(v, remainingNodes.remove(0));
+                            while (!remainingNodes.isEmpty() && (v.getCapacity() - visit.getLoad()) > remainingNodes.get(0).getDemand()) {
+                                currentRoute.add(remainingNodes.get(0));
+                                visit = visit.nextVisit(remainingNodes.remove(0));
+                            }
+                            candidate.add(new Route(v, currentRoute));
+                        }
+                        return candidate;
+                    }
+            );
+            System.out.println(routes);
             System.out.println();
         }
     }

@@ -27,6 +27,10 @@ public class Visit {
         return load;
     }
 
+    public Node getNode() {
+        return node;
+    }
+
     public boolean canVisitNext(Node node) {
         return (vehicle.getCapacity() - load) > node.getDemand();
     }

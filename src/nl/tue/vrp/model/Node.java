@@ -1,6 +1,9 @@
 package nl.tue.vrp.model;
 
-import java.awt.*;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class Node {
 
@@ -40,6 +43,8 @@ public abstract class Node {
 
     public static class Satellite extends Node {
 
+        private final List<Customer> customers = new ArrayList<>();
+
         public Satellite(int id, int x, int y, int demand) {
             super(id, x, y, demand);
         }
@@ -47,6 +52,21 @@ public abstract class Node {
         @Override
         public String toString() {
             return String.format("Satellite[id= %d, location= %s, demand= %d]", id, location, demand);
+        }
+
+        public void addCustomer(Customer customer) {
+            customers.add(customer);
+        }
+
+        public List<Node> listCustomers() {
+            return customers.stream().collect(Collectors.toUnmodifiableList());
+        }
+
+        public List<Node> listNodes() {
+            List<Node> nodes = new ArrayList<>();
+            nodes.add(this);
+            nodes.addAll(listCustomers());
+            return nodes.stream().collect(Collectors.toUnmodifiableList());
         }
     }
 
