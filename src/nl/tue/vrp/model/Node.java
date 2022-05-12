@@ -10,11 +10,13 @@ public abstract class Node {
     protected final int id;
     protected final Point location;
     protected final int demand;
+    protected final int serviceTime;
 
-    protected Node(int id, int x, int y, int demand) {
+    protected Node(int id, int x, int y, int demand, int serviceTime) {
         this.id = id;
         this.location = new Point(x, y);
         this.demand = demand;
+        this.serviceTime = serviceTime;
     }
 
     public int getId() {
@@ -29,10 +31,14 @@ public abstract class Node {
         return demand;
     }
 
+    public int getServiceTime() {
+        return serviceTime;
+    }
+
     public static class Depot extends Node {
 
-        public Depot(int id, int x, int y, int demand) {
-            super(id, x, y, demand);
+        public Depot(int id, int x, int y, int demand, int serviceTime) {
+            super(id, x, y, demand, serviceTime);
         }
 
         @Override
@@ -45,8 +51,8 @@ public abstract class Node {
 
         private final List<Customer> customers = new ArrayList<>();
 
-        public Satellite(int id, int x, int y, int demand) {
-            super(id, x, y, demand);
+        public Satellite(int id, int x, int y, int demand, int serviceTime) {
+            super(id, x, y, demand, serviceTime);
         }
 
         @Override
@@ -72,8 +78,27 @@ public abstract class Node {
 
     public static class Customer extends Node {
 
-        public Customer(int id, int x, int y, int demand) {
-            super(id, x, y, demand);
+        private final int early;
+        private final int latest;
+        private final Depot depot;
+
+        public Customer(int id, int x, int y, int demand, int serviceTime, int early, int latest, Depot depot) {
+            super(id, x, y, demand, serviceTime);
+            this.early = early;
+            this.latest = latest;
+            this.depot = depot;
+        }
+
+        public int getEarly() {
+            return early;
+        }
+
+        public int getLatest() {
+            return latest;
+        }
+
+        public Depot getDepot() {
+            return depot;
         }
 
         @Override
