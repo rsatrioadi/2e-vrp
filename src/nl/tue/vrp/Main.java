@@ -76,12 +76,17 @@ public class Main {
 
         for (Node sat: satellites) {
             System.out.printf("# Route for %s:%n", sat);
+
             Vehicle v1 = new Vehicle(sat.getId() * 100 + 1, 40);
             Vehicle v2 = new Vehicle(sat.getId() * 100 + 2, 20);
+
             Routes routes = new Routes(
                     List.of(v1, v2), // available vehicles
                     ((Node.Satellite) sat).listNodes(), // all nodes to visit (satellite + its customers)
                     (vs, ns) -> {
+
+                        // implement algorithm here
+
                         List<Route> candidate = new ArrayList<>();
 
                         List<Node> remainingNodes = new ArrayList<>(ns);
