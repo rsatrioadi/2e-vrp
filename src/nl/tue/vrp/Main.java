@@ -11,17 +11,20 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // create random nodes
+        // generate random nodes
 
         List<Node> nodes = new ArrayList<>();
         Random r = new Random(42);
 
+        // - generate depots
         for (int i=0; i<3; i++) {
             nodes.add(new Node.Depot(i, r.nextInt(100), r.nextInt(100), 0));
         }
+        // - generate satellites
         for (int i=3; i<7; i++) {
             nodes.add(new Node.Satellite(i, r.nextInt(100), r.nextInt(100), 0));
         }
+        // - generate customers
         for (int i=7; i<20; i++) {
             nodes.add(new Node.Customer(i, r.nextInt(100), r.nextInt(100), r.nextInt(20)));
         }
@@ -49,20 +52,26 @@ public class Main {
         // find each customer's nearest satellite
 
         Map<Node, List<Node>> satelliteToCustomer = new HashMap<>();
+        // - for each customer...
         for (Node cust: customers) {
+            // - find nearest satellite
             Node nearestSat = satellites.stream()
                     .reduce((n1, n2) -> world.distance(cust, n1) < world.distance(cust, n2) ? n1 : n2)
                     .get();
+            // - if there is no customer list for the satellite, make a new (empty) list
             if (!satelliteToCustomer.containsKey(nearestSat)) {
                 satelliteToCustomer.put(nearestSat, new ArrayList<>());
             }
+            // - add this customer to the list
             satelliteToCustomer.get(nearestSat).add(cust);
         }
 
         // print each satellite's customers
 
+        // - for each satellite...
         for (Node sat: satellites) {
             System.out.printf("# Customers for %s:%n", sat);
+            // - if there are customers assigned to it, print them all; otherwise print [none]
             if (satelliteToCustomer.containsKey(sat)) {
                 satelliteToCustomer.get(sat).forEach(System.out::println);
             } else {
