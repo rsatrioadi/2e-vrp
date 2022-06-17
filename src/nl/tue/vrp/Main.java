@@ -4,6 +4,7 @@ import nl.tue.vrp.model.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.BiFunction;
 
 public class Main {
 
@@ -90,35 +91,37 @@ public class Main {
                 Vehicle v1 = new Vehicle(sat.getId() * 100 + 1, 40);
                 Vehicle v2 = new Vehicle(sat.getId() * 100 + 2, 20);
 
+                BiFunction<List<Vehicle>, List<Node>, List<Route>> strategy = (vs, ns) -> {
+
+                    // implement algorithm here
+
+                    List<Route> candidate = new ArrayList<>();
+
+                    List<Node> remainingNodes = new ArrayList<>(ns);
+                    List<Vehicle> remainingVehicles = new ArrayList<>(vs);
+                    while (!remainingNodes.isEmpty() && !remainingVehicles.isEmpty()) {
+                        Vehicle v = remainingVehicles.remove(0);
+                        List<Node> currentRoute = new ArrayList<>();
+                        currentRoute.add(remainingNodes.get(0));
+                        Visit visit = new Visit(v, remainingNodes.remove(0));
+                        int idx = 0;
+                        while (idx < remainingNodes.size()) {
+                            if ((v.getCapacity() - visit.getLoad()) > remainingNodes.get(idx).getDemand()) {
+                                currentRoute.add(remainingNodes.get(idx));
+                                visit = visit.nextVisit(remainingNodes.remove(idx));
+                            } else {
+                                idx++;
+                            }
+                        }
+                        candidate.add(new Route(v, currentRoute));
+                    }
+                    return candidate;
+                };
+
                 Routes routes = new Routes(
                         List.of(v1, v2), // available vehicles
                         ((Node.Satellite) sat).listNodes(), // all nodes to visit (satellite + its customers)
-                        (vs, ns) -> {
-
-                            // implement algorithm here
-
-                            List<Route> candidate = new ArrayList<>();
-
-                            List<Node> remainingNodes = new ArrayList<>(ns);
-                            List<Vehicle> remainingVehicles = new ArrayList<>(vs);
-                            while (!remainingNodes.isEmpty() && !remainingVehicles.isEmpty()) {
-                                Vehicle v = remainingVehicles.remove(0);
-                                List<Node> currentRoute = new ArrayList<>();
-                                currentRoute.add(remainingNodes.get(0));
-                                Visit visit = new Visit(v, remainingNodes.remove(0));
-                                int idx = 0;
-                                while (idx < remainingNodes.size()) {
-                                    if ((v.getCapacity() - visit.getLoad()) > remainingNodes.get(idx).getDemand()) {
-                                        currentRoute.add(remainingNodes.get(idx));
-                                        visit = visit.nextVisit(remainingNodes.remove(idx));
-                                    } else {
-                                        idx++;
-                                    }
-                                }
-                                candidate.add(new Route(v, currentRoute));
-                            }
-                            return candidate;
-                        }
+                        strategy
                 );
                 System.out.println(routes);
                 System.out.println();
