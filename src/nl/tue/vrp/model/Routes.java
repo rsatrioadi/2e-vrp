@@ -1,5 +1,9 @@
 package nl.tue.vrp.model;
 
+import nl.tue.vrp.model.nodes.Node;
+import nl.tue.vrp.model.nodes.Satellite;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -10,17 +14,39 @@ public class Routes {
     private final List<Vehicle> vehicles;
     private final List<Route> routes;
 
-    public Routes(List<Vehicle> vehicles, List<Node> nodes, BiFunction<List<Vehicle>, List<Node>, List<Route>> routingStrategy) {
-        this.vehicles = vehicles.stream().collect(Collectors.toUnmodifiableList());
-        this.routes = routingStrategy.apply(vehicles, nodes).stream().collect(Collectors.toUnmodifiableList());
+    public Routes(Satellite origin,
+                  BiFunction<Visit, List<Node>, Node> nodeSearchStrategy) {
+
+        this.vehicles = origin.getVehicles().parallelStream().collect(Collectors.toUnmodifiableList());
+
+        List<Vehicle> remainingVehicles = new ArrayList<>(vehicles);
+        List<Node> remainingNodes = new ArrayList<>(origin.listCustomers());
+        List<Route> tRoutes = new ArrayList<>();
+
+        while (!remainingVehicles.isEmpty() && !remainingNodes.isEmpty()) {
+            Vehicle currentVehicle = remainingVehicles.remove(0);
+            Route currentRoute = new Route(origin, currentVehicle, remainingNodes, nodeSearchStrategy);
+            tRoutes.add(currentRoute);
+            remainingNodes.removeAll(currentRoute.getVisits().parallelStream()
+                    .map(Visit::getNode)
+                    .collect(Collectors.toList()));
+        }
+
+
+
+        this.routes = tRoutes.parallelStream().collect(Collectors.toUnmodifiableList());
         this.satisfied = this.routes.stream()
                 .flatMap(r -> r.getVisits().stream().map(Visit::getNode))
                 .collect(Collectors.toUnmodifiableList())
-                .containsAll(nodes);
+                .containsAll(origin.listCustomers());
     }
 
     public boolean isSatisfied() {
         return satisfied;
+    }
+
+    public List<Vehicle> getVehicles() {
+        return vehicles;
     }
 
     public List<Route> getRoutes() {

@@ -17,4 +17,9 @@ public class Vehicle {
     public int getCapacity() {
         return capacity;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Vehicle[id= %d, capacity= %d]", id, capacity);
+    }
 }

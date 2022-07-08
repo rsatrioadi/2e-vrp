@@ -1,30 +1,74 @@
 package nl.tue.vrp.model;
 
+import nl.tue.vrp.model.nodes.Node;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class Route {
 
     private final Vehicle vehicle;
+    private final Visit firstVisit;
     private final List<Visit> visits;
 
-    public Route(Vehicle vehicle, List<Node> nodes) {
+    public Route(Node origin, Vehicle vehicle, List<Node> nodes, BiFunction<Visit, List<Node>, Node> nodeSearchStrategy) {
         this.vehicle = vehicle;
-        List<Visit> tempVisits = new ArrayList<>();
-        tempVisits.add(new Visit(vehicle, nodes.get(0)));
-        int lastIdx = 0;
-        for (int i = 1; i < nodes.size(); i++) {
-            Visit prev = tempVisits.get(lastIdx);
-            tempVisits.add(prev.nextVisit(nodes.get(i)));
-            lastIdx++;
+        this.firstVisit = new Visit(vehicle, origin);
+        this.firstVisit.addNextVisit(origin);
+        Visit currentVisit = this.firstVisit;
+
+        List<Node> remainingNodes = new ArrayList<>(nodes);
+        List<Node> skippedNodes = new ArrayList<>();
+
+        boolean skip;
+        while(!remainingNodes.isEmpty()) {
+            Node nextNode = nodeSearchStrategy.apply(currentVisit, remainingNodes);
+            if (visitFeasible(currentVisit, nextNode)) {
+                currentVisit = currentVisit.addNextVisit(nextNode);
+                remainingNodes.remove(nextNode);
+                skip = false;
+            } else {
+                skip = true;
+                remainingNodes.remove(nextNode);
+                skippedNodes.add(nextNode);
+            }
+            if (!skip) {
+                remainingNodes.addAll(skippedNodes);
+                skippedNodes.clear();
+            }
         }
-        visits = Collections.unmodifiableList(tempVisits);
+
+        List<Visit> tVisits = new ArrayList<>();
+        Visit tVisit = this.firstVisit;
+        tVisits.add(tVisit);
+        while (tVisit.getNext().isPresent()) {
+            tVisit = tVisit.getNext().get();
+            tVisits.add(tVisit);
+        }
+        this.visits = tVisits.parallelStream().collect(Collectors.toUnmodifiableList());
     }
 
-    public Route(Vehicle vehicle, Node ... nodes) {
-        this(vehicle, List.of(nodes));
+    private boolean visitFeasible(Visit currentVisit, Node nextNode) {
+        Visit v = currentVisit;
+        if (nextNode.isDelivery()) {
+            boolean safe = v.getLoad() + nextNode.getDemand() <= vehicle.getCapacity();
+            while (safe && v.getPrev().isPresent()) {
+                v = v.getPrev().get();
+                safe = v.getLoad() + nextNode.getDemand() <= vehicle.getCapacity();
+            }
+            return safe;
+        } else if (nextNode.isPickUp()) {
+            boolean safe = true;
+            while (safe && v.getNext().isPresent()) {
+                v = v.getNext().get();
+                safe = v.getLoad() - nextNode.getDemand() <= vehicle.getCapacity();
+            }
+            return safe;
+        } else {
+            return true;
+        }
     }
 
     public Vehicle getVehicle() {
@@ -37,7 +81,7 @@ public class Route {
 
     @Override
     public String toString() {
-        return String.format("Route[%s]", visits.stream()
+        return String.format("Route[%s]", getVisits().stream()
                 .map(Visit::toString)
                 .collect(Collectors.joining(",\n")));
     }
