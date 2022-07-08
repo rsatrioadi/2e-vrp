@@ -33,7 +33,6 @@ public class Routes {
         }
 
 
-
         this.routes = tRoutes.parallelStream().collect(Collectors.toUnmodifiableList());
         this.satisfied = this.routes.stream()
                 .flatMap(r -> r.getVisits().stream().map(Visit::getNode))

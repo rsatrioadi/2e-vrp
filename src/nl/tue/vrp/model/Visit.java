@@ -10,16 +10,13 @@ public class Visit {
     private final Node node;
     private int load = 0;
 
-    private Optional<Visit> prev, next;
+    private Visit prev, next;
 
     public Visit(Vehicle vehicle, Node node) {
-        if (load > vehicle.getCapacity()) {
-            throw new IllegalStateException(String.format("load (%d) exceeds vehicle capacity (%d)", load, vehicle.getCapacity()));
-        }
         this.vehicle = vehicle;
         this.node = node;
-        this.prev = Optional.empty();
-        this.next = Optional.empty();
+        this.prev = null;
+        this.next = null;
     }
 
     public Vehicle getVehicle() {
@@ -36,10 +33,10 @@ public class Visit {
 
     public Visit addNextVisit(Node node) {
         Visit v = new Visit(vehicle, node);
-        this.next.ifPresent(n -> n.prev = Optional.of(v));
+        this.getNext().ifPresent(n -> n.prev = v);
         v.next = this.next;
-        this.next = Optional.of(v);
-        v.prev = Optional.of(this);
+        this.next = v;
+        v.prev = this;
         if (node.isDelivery()) v.updatePrevVisits(node);
         if (node.isPickUp()) v.updateNextVisits(node);
         v.load = this.load - node.getDemand();
@@ -47,14 +44,14 @@ public class Visit {
     }
 
     private void updatePrevVisits(Node node) {
-        prev.ifPresent(p -> {
+        getPrev().ifPresent(p -> {
             p.load += node.getDemand();
             p.updatePrevVisits(node);
         });
     }
 
     private void updateNextVisits(Node node) {
-        next.ifPresent(n -> {
+        getNext().ifPresent(n -> {
             n.load -= node.getDemand();
             n.updateNextVisits(node);
         });
@@ -66,10 +63,10 @@ public class Visit {
     }
 
     public Optional<Visit> getPrev() {
-        return prev;
+        return Optional.ofNullable(prev);
     }
 
     public Optional<Visit> getNext() {
-        return next;
+        return Optional.ofNullable(next);
     }
 }

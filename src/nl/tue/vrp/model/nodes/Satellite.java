@@ -11,18 +11,20 @@ import java.util.stream.Collectors;
 public class Satellite extends Node implements VehicleOwner {
 
     private final List<Customer> customers = new ArrayList<>();
+    private final List<Vehicle> vehicles = new ArrayList<>();
 
     public Satellite(int id, int x, int y, int demand, int serviceTime) {
         super(id, x, y, demand, serviceTime);
     }
 
-    private final List<Vehicle> vehicles = new ArrayList<>();
     public void addVehicle(Vehicle v) {
         vehicles.add(v);
     }
+
     public void addVehicles(Collection<Vehicle> vs) {
         vehicles.addAll(vs);
     }
+
     public List<Vehicle> getVehicles() {
         return vehicles.stream().collect(Collectors.toUnmodifiableList());
     }

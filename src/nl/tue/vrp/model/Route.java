@@ -23,7 +23,7 @@ public class Route {
         List<Node> skippedNodes = new ArrayList<>();
 
         boolean skip;
-        while(!remainingNodes.isEmpty()) {
+        while (!remainingNodes.isEmpty()) {
             Node nextNode = nodeSearchStrategy.apply(currentVisit, remainingNodes);
             if (visitFeasible(currentVisit, nextNode)) {
                 currentVisit = currentVisit.addNextVisit(nextNode);

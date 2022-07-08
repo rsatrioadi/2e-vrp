@@ -1,11 +1,6 @@
 package nl.tue.vrp.model.nodes;
 
-import nl.tue.vrp.model.VehicleOwner;
-
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.awt.*;
 
 public abstract class Node {
 
