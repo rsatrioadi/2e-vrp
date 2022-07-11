@@ -25,7 +25,7 @@ public class Routes {
 
         while (!remainingVehicles.isEmpty() && !remainingNodes.isEmpty()) {
             Vehicle currentVehicle = remainingVehicles.remove(0);
-            Route currentRoute = new Route(origin, currentVehicle, remainingNodes, nodeSearchStrategy);
+            Route currentRoute = new Route(origin, currentVehicle, remainingNodes, Route.Constraints.CHECK_ALL, nodeSearchStrategy);
             tRoutes.add(currentRoute);
             remainingNodes.removeAll(currentRoute.getVisits().parallelStream()
                     .map(Visit::getNode)

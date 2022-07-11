@@ -3,6 +3,7 @@ package nl.tue.vrp.model;
 import nl.tue.vrp.model.nodes.Node;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -12,9 +13,11 @@ public class Route {
     private final Vehicle vehicle;
     private final Visit firstVisit;
     private final List<Visit> visits;
+    private final EnumSet<Constraints> constraints;
 
-    public Route(Node origin, Vehicle vehicle, List<Node> nodes, BiFunction<Visit, List<Node>, Node> nodeSearchStrategy) {
+    public Route(Node origin, Vehicle vehicle, List<Node> nodes, EnumSet<Constraints> constraints, BiFunction<Visit, List<Node>, Node> nodeSearchStrategy) {
         this.vehicle = vehicle;
+        this.constraints = constraints;
         this.firstVisit = new Visit(vehicle, origin);
         this.firstVisit.addNextVisit(origin);
         Visit currentVisit = this.firstVisit;
@@ -51,6 +54,17 @@ public class Route {
     }
 
     private boolean visitFeasible(Visit currentVisit, Node nextNode) {
+        boolean feasible = true;
+        if (constraints.contains(Constraints.CHECK_CAPACITY)) {
+            feasible &= checkCapacity(currentVisit, nextNode);
+        }
+        if (constraints.contains(Constraints.CHECK_TIME)) {
+            feasible &= checkTimeHard(currentVisit, nextNode);
+        }
+        return feasible;
+    }
+
+    private boolean checkCapacity(Visit currentVisit, Node nextNode) {
         Visit v = currentVisit;
         if (nextNode.isDelivery()) {
             boolean safe = v.getLoad() + nextNode.getDemand() <= vehicle.getCapacity();
@@ -71,6 +85,10 @@ public class Route {
         }
     }
 
+    private boolean checkTimeHard(Visit currentVisit, Node nextNode) {
+        return true;
+    }
+
     public Vehicle getVehicle() {
         return vehicle;
     }
@@ -84,5 +102,10 @@ public class Route {
         return String.format("Route[%s]", getVisits().stream()
                 .map(Visit::toString)
                 .collect(Collectors.joining(",\n")));
+    }
+
+    public enum Constraints {
+        CHECK_CAPACITY, CHECK_TIME;
+        public static final EnumSet<Constraints> CHECK_ALL = EnumSet.allOf(Constraints.class);
     }
 }

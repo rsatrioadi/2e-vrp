@@ -32,6 +32,14 @@ public abstract class Node {
         return serviceTime;
     }
 
+    public int getEarliest() {
+        return Integer.MIN_VALUE;
+    }
+
+    public int getLatest() {
+        return Integer.MAX_VALUE;
+    }
+
     public boolean isDelivery() {
         return demand > 0;
     }

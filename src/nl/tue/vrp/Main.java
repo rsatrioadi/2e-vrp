@@ -19,7 +19,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-        String fileName = "data/example.csv";
         try {
 
             // generate random nodes
@@ -29,15 +28,15 @@ public class Main {
 
             // - generate depots
             for (int i = 0; i < 3; i++) {
-                wNodes.add(new Depot(i, r.nextInt(100), r.nextInt(100), 0, 0));
+                wNodes.add(new Depot(i, r.nextInt(100)+1, r.nextInt(100)+1, 0, 0));
             }
             // - generate satellites
             for (int i = 3; i < 7; i++) {
-                wNodes.add(new Satellite(i, r.nextInt(100), r.nextInt(100), 0, 0));
+                wNodes.add(new Satellite(i, r.nextInt(100)+1, r.nextInt(100)+1, 0));
             }
             // - generate customers
             for (int i = 7; i < 57; i++) {
-                wNodes.add(new Customer(i, r.nextInt(100), r.nextInt(100), r.nextInt(20) * (r.nextBoolean() ? 1 : -1), 0, 0, 0, null));
+                wNodes.add(new Customer(i, r.nextInt(100)+1, r.nextInt(100)+1, (r.nextInt(20)+1) * (r.nextBoolean() ? 1 : -1), 0, 0, 0, null));
             }
 
             // build the world
@@ -46,6 +45,7 @@ public class Main {
 
             // load world from file
 
+//            String fileName = "data/example.csv";
 //            World world = new World(fileName);
 
             List<Depot> depots = world.depots();
@@ -55,7 +55,7 @@ public class Main {
             for (Satellite sat : satellites) {
                 // add vehicles (dummy - should be configurable from file etc)
                 for (int i = 1; i <= 5; i++) {
-                    sat.addVehicle(new Vehicle(sat.getId() * 100 + i, 50));
+                    sat.addVehicle(new Vehicle(sat.getId() * 100 + i, 50, 1d));
                 }
             }
 
@@ -101,7 +101,6 @@ public class Main {
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());
-//            System.err.printf("Cannot open file %s%n", fileName);
             System.exit(-1);
         }
 

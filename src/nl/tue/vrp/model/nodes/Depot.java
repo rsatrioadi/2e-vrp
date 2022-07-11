@@ -30,6 +30,10 @@ public class Depot extends Node implements VehicleOwner {
 
     @Override
     public String toString() {
-        return String.format("Depot[id= %d, location= %s, vehicleCapacities= %s]", id, location, vehicles.stream().map(Vehicle::getCapacity).collect(Collectors.toUnmodifiableList()));
+        return String.format("Depot[id= %d, location= %s, vehicleCapacities= %s, vehicleSpeeds= %s]",
+                id,
+                location,
+                vehicles.stream().map(Vehicle::getCapacity).collect(Collectors.toUnmodifiableList()),
+                vehicles.stream().map(Vehicle::getSpeed).collect(Collectors.toUnmodifiableList()));
     }
 }

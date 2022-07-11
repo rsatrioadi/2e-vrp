@@ -50,7 +50,7 @@ public class World {
             nextId = nodes.size();
             for (int i = 0; i < satRecs.size(); i++) {
                 var r = satRecs.get(i);
-                Node n = new Satellite(i + nextId, Integer.parseInt(r[1]), Integer.parseInt(r[2]), 0, Integer.parseInt(r[3]));
+                Node n = new Satellite(i + nextId, Integer.parseInt(r[1]), Integer.parseInt(r[2]), Integer.parseInt(r[3]));
                 nodes.add(n);
             }
             List<String[]> delivRecs = records.stream()
