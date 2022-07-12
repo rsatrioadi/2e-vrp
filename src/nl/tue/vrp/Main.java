@@ -28,7 +28,7 @@ public class Main {
 
             // - generate depots
             for (int i = 0; i < 3; i++) {
-                wNodes.add(new Depot(i, r.nextInt(100)+1, r.nextInt(100)+1, 0, 0));
+                wNodes.add(new Depot(i, r.nextInt(100)+1, r.nextInt(100)+1, 0));
             }
             // - generate satellites
             for (int i = 3; i < 7; i++) {
@@ -90,9 +90,11 @@ public class Main {
                 System.out.printf("# Route for %s:%n", sat);
 
                 // greedy strategy: find next closest node
-                BiFunction<Visit, List<Node>, Node> searchNodeStrategy = (visit, nodes) -> nodes.parallelStream()
-                        .min(Comparator.comparingDouble(n -> world.distance(n, visit.getNode())))
-                        .get();
+                BiFunction<Visit, List<Node>, Node> searchNodeStrategy =
+                        (visit, nodes) -> nodes.stream()
+                                .parallel()
+                                .min(Comparator.comparingDouble(n -> world.distance(n, visit.getNode())))
+                                .get();
 
                 Routes routes = new Routes(sat, searchNodeStrategy);
 

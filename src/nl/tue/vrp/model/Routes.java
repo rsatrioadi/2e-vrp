@@ -4,6 +4,7 @@ import nl.tue.vrp.model.nodes.Node;
 import nl.tue.vrp.model.nodes.Satellite;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -17,7 +18,9 @@ public class Routes {
     public Routes(Satellite origin,
                   BiFunction<Visit, List<Node>, Node> nodeSearchStrategy) {
 
-        this.vehicles = origin.getVehicles().parallelStream().collect(Collectors.toUnmodifiableList());
+        this.vehicles = origin.getVehicles().stream()
+                .parallel()
+                .collect(Collectors.toUnmodifiableList());
 
         List<Vehicle> remainingVehicles = new ArrayList<>(vehicles);
         List<Node> remainingNodes = new ArrayList<>(origin.listCustomers());
@@ -27,16 +30,19 @@ public class Routes {
             Vehicle currentVehicle = remainingVehicles.remove(0);
             Route currentRoute = new Route(origin, currentVehicle, remainingNodes, Route.Constraints.CHECK_ALL, nodeSearchStrategy);
             tRoutes.add(currentRoute);
-            remainingNodes.removeAll(currentRoute.getVisits().parallelStream()
+            remainingNodes.removeAll(currentRoute.getVisits().stream()
+                    .parallel()
                     .map(Visit::getNode)
                     .collect(Collectors.toList()));
         }
 
-
-        this.routes = tRoutes.parallelStream().collect(Collectors.toUnmodifiableList());
-        this.satisfied = this.routes.stream()
-                .flatMap(r -> r.getVisits().stream().map(Visit::getNode))
-                .collect(Collectors.toUnmodifiableList())
+        this.routes = tRoutes.stream().parallel().collect(Collectors.toUnmodifiableList());
+        this.satisfied = new HashSet<>(this.routes.stream()
+                .parallel()
+                .flatMap(r -> r.getVisits().stream()
+                        .parallel()
+                        .map(Visit::getNode))
+                .collect(Collectors.toUnmodifiableList()))
                 .containsAll(origin.listCustomers());
     }
 
@@ -45,16 +51,25 @@ public class Routes {
     }
 
     public List<Vehicle> getVehicles() {
-        return vehicles;
+        return vehicles.stream()
+                .parallel()
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public List<Route> getRoutes() {
-        return routes;
+        return routes.stream()
+                .parallel()
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public String toString() {
-        String s = String.format("Routes[satisfied= %s, routes=[\n%s\n]", satisfied, routes.stream().map(Route::toString).collect(Collectors.joining(",\n")));
+        String s = String.format("Routes[satisfied= %s, routes= [\n%s]",
+                satisfied,
+                routes.stream()
+                        .parallel()
+                        .map(Route::toString)
+                        .collect(Collectors.joining(",\n")));
         return s;
     }
 }

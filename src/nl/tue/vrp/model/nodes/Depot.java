@@ -12,8 +12,8 @@ public class Depot extends Node implements VehicleOwner {
 
     private final List<Vehicle> vehicles = new ArrayList<>();
 
-    public Depot(int id, int x, int y, int demand, int serviceTime) {
-        super(id, x, y, demand, serviceTime);
+    public Depot(int id, int x, int y, int serviceTime) {
+        super(id, x, y, 0, serviceTime);
     }
 
     public void addVehicle(Vehicle v) {
@@ -25,7 +25,9 @@ public class Depot extends Node implements VehicleOwner {
     }
 
     public List<Vehicle> getVehicles() {
-        return vehicles.stream().collect(Collectors.toUnmodifiableList());
+        return vehicles.stream()
+                .parallel()
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
@@ -33,7 +35,13 @@ public class Depot extends Node implements VehicleOwner {
         return String.format("Depot[id= %d, location= %s, vehicleCapacities= %s, vehicleSpeeds= %s]",
                 id,
                 location,
-                vehicles.stream().map(Vehicle::getCapacity).collect(Collectors.toUnmodifiableList()),
-                vehicles.stream().map(Vehicle::getSpeed).collect(Collectors.toUnmodifiableList()));
+                vehicles.stream()
+                        .parallel()
+                        .map(Vehicle::getCapacity)
+                        .collect(Collectors.toUnmodifiableList()),
+                vehicles.stream()
+                        .parallel()
+                        .map(Vehicle::getSpeed)
+                        .collect(Collectors.toUnmodifiableList()));
     }
 }

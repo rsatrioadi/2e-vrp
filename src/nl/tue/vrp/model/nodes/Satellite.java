@@ -26,7 +26,9 @@ public class Satellite extends Node implements VehicleOwner {
     }
 
     public List<Vehicle> getVehicles() {
-        return vehicles.stream().collect(Collectors.toUnmodifiableList());
+        return vehicles.stream()
+                .parallel()
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
@@ -34,8 +36,14 @@ public class Satellite extends Node implements VehicleOwner {
         return String.format("Satellite[id= %d, location= %s, vehicleCapacities= %s, vehicleSpeeds= %s]",
                 id,
                 location,
-                vehicles.stream().map(Vehicle::getCapacity).collect(Collectors.toUnmodifiableList()),
-                vehicles.stream().map(Vehicle::getSpeed).collect(Collectors.toUnmodifiableList()));
+                vehicles.stream()
+                        .parallel()
+                        .map(Vehicle::getCapacity)
+                        .collect(Collectors.toUnmodifiableList()),
+                vehicles.stream()
+                        .parallel()
+                        .map(Vehicle::getSpeed)
+                        .collect(Collectors.toUnmodifiableList()));
     }
 
     public void addCustomer(Customer customer) {
@@ -43,13 +51,17 @@ public class Satellite extends Node implements VehicleOwner {
     }
 
     public List<Customer> listCustomers() {
-        return customers.stream().collect(Collectors.toUnmodifiableList());
+        return customers.stream()
+                .parallel()
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public List<Node> listNodes() {
         List<Node> nodes = new ArrayList<>();
         nodes.add(this);
         nodes.addAll(listCustomers());
-        return nodes.stream().collect(Collectors.toUnmodifiableList());
+        return nodes.stream()
+                .parallel()
+                .collect(Collectors.toUnmodifiableList());
     }
 }

@@ -3,6 +3,7 @@ package nl.tue.vrp.model;
 import nl.tue.vrp.model.nodes.Node;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -50,7 +51,9 @@ public class Route {
             tVisit = tVisit.getNext().get();
             tVisits.add(tVisit);
         }
-        this.visits = tVisits.parallelStream().collect(Collectors.toUnmodifiableList());
+        this.visits = tVisits.stream()
+                .parallel()
+                .collect(Collectors.toUnmodifiableList());
     }
 
     private boolean visitFeasible(Visit currentVisit, Node nextNode) {
@@ -94,14 +97,22 @@ public class Route {
     }
 
     public List<Visit> getVisits() {
-        return visits;
+        return visits.stream()
+                .parallel()
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public String toString() {
-        return String.format("Route[%s]", getVisits().stream()
-                .map(Visit::toString)
-                .collect(Collectors.joining(",\n")));
+        return String.format("Route[maxLoad= %d, visits= [\n  %s]]",
+                getVisits().stream()
+                        .parallel()
+                        .mapToInt(Visit::getLoad)
+                        .max().getAsInt(),
+                getVisits().stream()
+                        .parallel()
+                        .map(Visit::toString)
+                        .collect(Collectors.joining(",\n  ")));
     }
 
     public enum Constraints {

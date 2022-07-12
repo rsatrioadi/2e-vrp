@@ -9,6 +9,7 @@ public class Visit {
     private final Vehicle vehicle;
     private final Node node;
     private int load = 0;
+    private int arrivalTime, departureTime;
 
     private Visit prev, next;
 
@@ -31,14 +32,25 @@ public class Visit {
         return node;
     }
 
+    public int getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public int getDepartureTime() {
+        return departureTime;
+    }
+
     public Visit addNextVisit(Node node) {
-        Visit v = new Visit(vehicle, node);
+        Visit v = new Visit(vehicle, node)
+                ;
         this.getNext().ifPresent(n -> n.prev = v);
         v.next = this.next;
         this.next = v;
         v.prev = this;
+
         if (node.isDelivery()) v.updatePrevVisits(node);
         if (node.isPickUp()) v.updateNextVisits(node);
+
         v.load = this.load - node.getDemand();
         return v;
     }
@@ -59,7 +71,12 @@ public class Visit {
 
     @Override
     public String toString() {
-        return String.format("Visit[vehicle.id= %d, vehicle.capacity= %d, load= %d, node.id= %d, node.demand= %d]", vehicle.getId(), vehicle.getCapacity(), load, node.getId(), node.getDemand());
+        return String.format("Visit[vehicle.id= %d, vehicle.capacity= %d, load= %d, node.id= %d, node.demand= %d]",
+                vehicle.getId(),
+                vehicle.getCapacity(),
+                load,
+                node.getId(),
+                node.getDemand());
     }
 
     public Optional<Visit> getPrev() {
