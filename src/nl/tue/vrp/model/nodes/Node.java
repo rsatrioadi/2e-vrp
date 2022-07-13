@@ -50,6 +50,9 @@ public abstract class Node {
 
     @Override
     public String toString() {
-        return String.format("Node[id= %d, location= %s, demand= %d]", id, location, demand);
+        return String.format("Node id: %2d location: %s demand: %d",
+                id,
+                String.format("(Point x: %3d y: %3d)", location.x, location.y),
+                demand);
     }
 }

@@ -27,6 +27,9 @@ public class Customer extends Node {
 
     @Override
     public String toString() {
-        return String.format("Customer[id= %d, location= %s, demand= %d]", id, location, demand);
+        return String.format("Customer id: %2d location: %s demand: %3d",
+                id,
+                String.format("(Point x: %3d y: %3d)", location.x, location.y),
+                demand);
     }
 }

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class Route {
 
     private final Vehicle vehicle;
-    private final Visit firstVisit;
+    private final Visit firstVisit, lastVisit;
     private final List<Visit> visits;
     private final EnumSet<Constraints> constraints;
 
@@ -19,7 +19,7 @@ public class Route {
         this.vehicle = vehicle;
         this.constraints = constraints;
         this.firstVisit = new Visit(vehicle, origin);
-        this.firstVisit.addNextVisit(origin);
+        this.lastVisit = this.firstVisit.addNextVisit(origin);
         Visit currentVisit = this.firstVisit;
 
         List<Node> remainingNodes = new ArrayList<>(nodes);
@@ -99,8 +99,10 @@ public class Route {
 
     @Override
     public String toString() {
-        return String.format("Route[%s]", getVisits().stream()
-                .map(Visit::toString)
+        return String.format("Route totalCost: %6.2f visits: #(\n%s)",
+                lastVisit.getAccumulatedCost(),
+                getVisits().stream()
+                .map(visit -> String.format("    (%s)", visit.toString()))
                 .collect(Collectors.joining(",\n")));
     }
 

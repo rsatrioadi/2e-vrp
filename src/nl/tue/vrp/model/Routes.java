@@ -54,7 +54,11 @@ public class Routes {
 
     @Override
     public String toString() {
-        String s = String.format("Routes[satisfied= %s, routes=[\n%s\n]", satisfied, routes.stream().map(Route::toString).collect(Collectors.joining(",\n")));
+        String s = String.format("Routes satisfied: %s routes: #(\n%s)",
+                satisfied,
+                routes.stream()
+                        .map(route -> String.format("  %s", route.toString()))
+                        .collect(Collectors.joining(",\n")));
         return s;
     }
 }

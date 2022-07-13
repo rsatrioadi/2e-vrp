@@ -30,10 +30,10 @@ public class Depot extends Node implements VehicleOwner {
 
     @Override
     public String toString() {
-        return String.format("Depot[id= %d, location= %s, vehicleCapacities= %s, vehicleSpeeds= %s]",
+        return String.format("Depot id: %2d location: %s vehicleCapacities: #(%s) vehicleSpeeds: #(%s)",
                 id,
-                location,
-                vehicles.stream().map(Vehicle::getCapacity).collect(Collectors.toUnmodifiableList()),
-                vehicles.stream().map(Vehicle::getSpeed).collect(Collectors.toUnmodifiableList()));
+                String.format("(Point x: %3d y: %3d)", location.x, location.y),
+                vehicles.stream().map(v -> String.valueOf(v.getCapacity())).collect(Collectors.joining(" ")),
+                vehicles.stream().map(v -> String.valueOf(v.getSpeed())).collect(Collectors.joining(" ")));
     }
 }

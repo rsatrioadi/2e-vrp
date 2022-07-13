@@ -28,15 +28,15 @@ public class Main {
 
             // - generate depots
             for (int i = 0; i < 3; i++) {
-                wNodes.add(new Depot(i, r.nextInt(100)+1, r.nextInt(100)+1, 0, 0));
+                wNodes.add(new Depot(i, r.nextInt(100) + 1, r.nextInt(100) + 1, 0, 0));
             }
             // - generate satellites
             for (int i = 3; i < 7; i++) {
-                wNodes.add(new Satellite(i, r.nextInt(100)+1, r.nextInt(100)+1, 0));
+                wNodes.add(new Satellite(i, r.nextInt(100) + 1, r.nextInt(100) + 1, 0));
             }
             // - generate customers
             for (int i = 7; i < 57; i++) {
-                wNodes.add(new Customer(i, r.nextInt(100)+1, r.nextInt(100)+1, (r.nextInt(20)+1) * (r.nextBoolean() ? 1 : -1), 0, 0, 0, null));
+                wNodes.add(new Customer(i, r.nextInt(100) + 1, r.nextInt(100) + 1, (r.nextInt(20) + 1) * (r.nextBoolean() ? 1 : -1), 0, 0, 0, null));
             }
 
             // build the world

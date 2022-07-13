@@ -9,6 +9,7 @@ public class Visit {
     private final Vehicle vehicle;
     private final Node node;
     private int load = 0;
+    private double legCost, accumulatedCost;
 
     private Visit prev, next;
 
@@ -17,6 +18,8 @@ public class Visit {
         this.node = node;
         this.prev = null;
         this.next = null;
+        this.legCost = 0;
+        this.accumulatedCost = 0;
     }
 
     public Vehicle getVehicle() {
@@ -31,16 +34,41 @@ public class Visit {
         return node;
     }
 
+    public double getLegCost() {
+        return legCost;
+    }
+
+    public double getAccumulatedCost() {
+        return accumulatedCost;
+    }
+
     public Visit addNextVisit(Node node) {
+
         Visit v = new Visit(vehicle, node);
+
         this.getNext().ifPresent(n -> n.prev = v);
         v.next = this.next;
         this.next = v;
         v.prev = this;
+
         if (node.isDelivery()) v.updatePrevVisits(node);
         if (node.isPickUp()) v.updateNextVisits(node);
+
         v.load = this.load - node.getDemand();
+        v.legCost = node.getLocation().distance(this.getNode().getLocation());
+        v.accumulatedCost = this.accumulatedCost + v.legCost;
+
+        v.updateNextVisitCost(node);
+
         return v;
+    }
+
+    private void updateNextVisitCost(Node node) {
+        getNext().ifPresent(n -> {
+            n.legCost = n.getNode().getLocation().distance(node.getLocation());
+            n.accumulatedCost = this.accumulatedCost + n.legCost;
+            n.updateNextVisitCost(n.getNode());
+        });
     }
 
     private void updatePrevVisits(Node node) {
@@ -59,7 +87,12 @@ public class Visit {
 
     @Override
     public String toString() {
-        return String.format("Visit[vehicle.id= %d, vehicle.capacity= %d, load= %d, node.id= %d, node.demand= %d]", vehicle.getId(), vehicle.getCapacity(), load, node.getId(), node.getDemand());
+        return String.format("Visit vehicle: (Vehicle id: %d capacity: %d) load: %2d cost: %5.2f accumulatedCost: %6.2f node: (Node id: %2d demand: %3d)",
+                vehicle.getId(), vehicle.getCapacity(),
+                load,
+                legCost,
+                accumulatedCost,
+                node.getId(), node.getDemand());
     }
 
     public Optional<Visit> getPrev() {
