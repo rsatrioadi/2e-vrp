@@ -10,6 +10,7 @@ public class Visit {
     private final Node node;
     private int load = 0;
     private double legCost, accumulatedCost;
+    private int arrivalTime, departureTime;
 
     private Visit prev, next;
 
@@ -40,6 +41,14 @@ public class Visit {
 
     public double getAccumulatedCost() {
         return accumulatedCost;
+    }
+
+    public int getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public int getDepartureTime() {
+        return departureTime;
     }
 
     public Visit addNextVisit(Node node) {
@@ -88,11 +97,13 @@ public class Visit {
     @Override
     public String toString() {
         return String.format("Visit vehicle: (Vehicle id: %d capacity: %d) load: %2d cost: %5.2f accumulatedCost: %6.2f node: (Node id: %2d demand: %3d)",
-                vehicle.getId(), vehicle.getCapacity(),
+                vehicle.getId(),
+                vehicle.getCapacity(),
                 load,
                 legCost,
                 accumulatedCost,
-                node.getId(), node.getDemand());
+                node.getId(),
+                node.getDemand());
     }
 
     public Optional<Visit> getPrev() {

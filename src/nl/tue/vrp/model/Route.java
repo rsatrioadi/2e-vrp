@@ -50,7 +50,9 @@ public class Route {
             tVisit = tVisit.getNext().get();
             tVisits.add(tVisit);
         }
-        this.visits = tVisits.parallelStream().collect(Collectors.toUnmodifiableList());
+        this.visits = tVisits.stream()
+                .parallel()
+                .collect(Collectors.toUnmodifiableList());
     }
 
     private boolean visitFeasible(Visit currentVisit, Node nextNode) {
@@ -94,7 +96,9 @@ public class Route {
     }
 
     public List<Visit> getVisits() {
-        return visits;
+        return visits.stream()
+                .parallel()
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override

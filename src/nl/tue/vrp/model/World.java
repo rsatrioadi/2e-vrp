@@ -18,7 +18,9 @@ public class World {
     private double[][] distances;
 
     public World(List<Node> nodes) {
-        this.nodes = nodes.stream().collect(Collectors.toUnmodifiableList());
+        this.nodes = nodes.stream()
+                .parallel()
+                .collect(Collectors.toUnmodifiableList());
         calculateDistances();
         findNearestSatellites();
     }
@@ -36,15 +38,17 @@ public class World {
             }
             List<Node> nodes = new ArrayList<>();
             List<String[]> depotRecs = records.stream()
+                    .parallel()
                     .filter(r -> r[0].equalsIgnoreCase("Depot"))
                     .collect(Collectors.toUnmodifiableList());
             int nextId = 1;
             for (int i = 0; i < depotRecs.size(); i++) {
                 var r = depotRecs.get(i);
-                Node n = new Depot(i + nextId, Integer.parseInt(r[1]), Integer.parseInt(r[2]), 0, Integer.parseInt(r[3]));
+                Node n = new Depot(i + nextId, Integer.parseInt(r[1]), Integer.parseInt(r[2]), Integer.parseInt(r[3]));
                 nodes.add(n);
             }
             List<String[]> satRecs = records.stream()
+                    .parallel()
                     .filter(r -> r[0].equalsIgnoreCase("Satellite"))
                     .collect(Collectors.toUnmodifiableList());
             nextId = nodes.size();
@@ -54,6 +58,7 @@ public class World {
                 nodes.add(n);
             }
             List<String[]> delivRecs = records.stream()
+                    .parallel()
                     .filter(r -> r[0].equalsIgnoreCase("Delivery"))
                     .collect(Collectors.toUnmodifiableList());
             nextId = nodes.size();
@@ -67,6 +72,7 @@ public class World {
                         Integer.parseInt(r[4]),
                         Integer.parseInt(r[5]),
                         (Depot) nodes.stream()
+                                .parallel()
                                 .filter(n1 -> n1.getId() == Integer.parseInt(r[7]))
                                 .findFirst()
                                 .get());
@@ -86,12 +92,15 @@ public class World {
                         Integer.parseInt(r[4]),
                         Integer.parseInt(r[5]),
                         (Depot) nodes.stream()
+                                .parallel()
                                 .filter(n1 -> n1.getId() == Integer.parseInt(r[7]))
                                 .findFirst()
                                 .get());
                 nodes.add(n);
             }
-            this.nodes = nodes.stream().collect(Collectors.toUnmodifiableList());
+            this.nodes = nodes.stream()
+                    .parallel()
+                    .collect(Collectors.toUnmodifiableList());
             calculateDistances();
             findNearestSatellites();
         }
@@ -103,6 +112,7 @@ public class World {
 
     private void calculateDistances() {
         int length = this.nodes.stream()
+                .parallel()
                 .map(Node::getId)
                 .max(Integer::compare)
                 .get() + 1;
@@ -120,6 +130,7 @@ public class World {
         for (Customer cust : customers()) {
             // - find nearest satellite
             Satellite nearestSat = satellites().stream()
+                    .parallel()
                     .reduce((n1, n2) -> distance(cust, n1) < distance(cust, n2) ? n1 : n2)
                     .get();
             nearestSat.addCustomer(cust);
