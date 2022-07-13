@@ -12,8 +12,8 @@ public class Depot extends Node implements VehicleOwner {
 
     private final List<Vehicle> vehicles = new ArrayList<>();
 
-    public Depot(int id, int x, int y, int demand, int serviceTime) {
-        super(id, x, y, demand, serviceTime);
+    public Depot(int id, int x, int y, int serviceTime) {
+        super(id, x, y, 0, serviceTime);
     }
 
     public void addVehicle(Vehicle v) {

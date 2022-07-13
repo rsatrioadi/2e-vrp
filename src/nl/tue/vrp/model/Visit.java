@@ -96,9 +96,7 @@ public class Visit {
 
     @Override
     public String toString() {
-        return String.format("Visit vehicle: (Vehicle id: %d capacity: %d) load: %2d cost: %5.2f accumulatedCost: %6.2f node: (Node id: %2d demand: %3d)",
-                vehicle.getId(),
-                vehicle.getCapacity(),
+        return String.format("Visit load: %2d cost: %5.2f accumulatedCost: %6.2f node: (Node id: %2d demand: %3d)",
                 load,
                 legCost,
                 accumulatedCost,

@@ -28,7 +28,7 @@ public class Main {
 
             // - generate depots
             for (int i = 0; i < 3; i++) {
-                wNodes.add(new Depot(i, r.nextInt(100) + 1, r.nextInt(100) + 1, 0, 0));
+                wNodes.add(new Depot(i, r.nextInt(100) + 1, r.nextInt(100) + 1, 0));
             }
             // - generate satellites
             for (int i = 3; i < 7; i++) {
@@ -61,13 +61,13 @@ public class Main {
 
             // print all nodes
 
-            System.out.println("# All depots:");
+            System.out.println("\"All depots:\"");
             depots.forEach(System.out::println);
             System.out.println();
-            System.out.println("# All satellites:");
+            System.out.println("\"All satellites:\"");
             satellites.forEach(System.out::println);
             System.out.println();
-            System.out.println("# All customers:");
+            System.out.println("\"All customers:\"");
             customers.forEach(System.out::println);
             System.out.println();
 
@@ -75,19 +75,19 @@ public class Main {
 
             // - for each satellite...
             for (Satellite sat : satellites) {
-                System.out.printf("# Customers for %s:%n", sat);
+                System.out.printf("\"Customers for %s:\"%n", sat);
                 // - if there are customers assigned to it, print them all; otherwise print [none]
                 List<Customer> myCustomers = sat.listCustomers();
                 if (!myCustomers.isEmpty()) {
                     myCustomers.forEach(System.out::println);
                 } else {
-                    System.out.println("[none]");
+                    System.out.println("(none)");
                 }
                 System.out.println();
             }
 
             for (Satellite sat : satellites) {
-                System.out.printf("# Route for %s:%n", sat);
+                System.out.printf("\"Route for %s:\"%n", sat);
 
                 // greedy strategy: find next closest node
                 BiFunction<Visit, List<Node>, Node> searchNodeStrategy = (visit, nodes) -> nodes.parallelStream()

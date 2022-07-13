@@ -103,11 +103,18 @@ public class Route {
 
     @Override
     public String toString() {
-        return String.format("Route totalCost: %6.2f visits: #(\n%s)",
+        return String.format("Route vehicle: (Vehicle id: %d capacity: %d) maxLoad: %2d totalCost: %6.2f visits: #(\n%s)",
+                vehicle.getId(),
+                vehicle.getCapacity(),
+                getVisits().stream()
+                        .parallel()
+                        .mapToInt(Visit::getLoad)
+                        .max().getAsInt(),
                 lastVisit.getAccumulatedCost(),
                 getVisits().stream()
-                .map(visit -> String.format("    (%s)", visit.toString()))
-                .collect(Collectors.joining(",\n")));
+                        .parallel()
+                        .map(visit -> String.format("    (%s)", visit.toString()))
+                        .collect(Collectors.joining(",\n")));
     }
 
     public enum Constraints {
