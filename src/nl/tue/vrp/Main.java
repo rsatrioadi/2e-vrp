@@ -1,133 +1,106 @@
 package nl.tue.vrp;
 
-import nl.tue.vrp.model.*;
+import nl.tue.vrp.model.Routes;
+import nl.tue.vrp.model.Vehicle;
+import nl.tue.vrp.model.Visit;
+import nl.tue.vrp.model.World;
+import nl.tue.vrp.model.nodes.Customer;
+import nl.tue.vrp.model.nodes.Depot;
+import nl.tue.vrp.model.nodes.Node;
+import nl.tue.vrp.model.nodes.Satellite;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
 import java.util.function.BiFunction;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        String fileName = "data/example.csv";
         try {
 
-//            // generate random nodes
-//
-//            List<Node> nodes = new ArrayList<>();
-//            Random r = new Random(42);
-//
-//            // - generate depots
-//            for (int i=0; i<3; i++) {
-//                nodes.add(new Node.Depot(i, r.nextInt(100), r.nextInt(100), 0, 0));
-//            }
-//            // - generate satellites
-//            for (int i=3; i<7; i++) {
-//                nodes.add(new Node.Satellite(i, r.nextInt(100), r.nextInt(100), 0, 0));
-//            }
-//            // - generate customers
-//            for (int i=7; i<20; i++) {
-//                nodes.add(new Node.Customer(i, r.nextInt(100), r.nextInt(100), r.nextInt(20), 0, 0, 0, null));
-//            }
-//
-//            // build the world
-//
-//            World world = new World(nodes);
+            // generate random nodes
+
+            List<Node> wNodes = new ArrayList<>();
+            Random r = new Random(42);
+
+            // - generate depots
+            for (int i = 0; i < 3; i++) {
+                wNodes.add(new Depot(i, r.nextInt(100) + 1, r.nextInt(100) + 1, 0));
+            }
+            // - generate satellites
+            for (int i = 3; i < 7; i++) {
+                wNodes.add(new Satellite(i, r.nextInt(100) + 1, r.nextInt(100) + 1, 0));
+            }
+            // - generate customers
+            for (int i = 7; i < 57; i++) {
+                wNodes.add(new Customer(i, r.nextInt(100) + 1, r.nextInt(100) + 1, (r.nextInt(20) + 1) * (r.nextBoolean() ? 1 : -1), 0, 0, 0, null));
+            }
+
+            // build the world
+
+            World world = new World(wNodes);
 
             // load world from file
 
-            World world = new World(fileName);
+//            String fileName = "data/example.csv";
+//            World world = new World(fileName);
 
-            List<Node> depots = world.depots();
-            List<Node> satellites = world.satellites();
-            List<Node> customers = world.customers();
+            List<Depot> depots = world.depots();
+            List<Satellite> satellites = world.satellites();
+            List<Customer> customers = world.customers();
+
+            for (Satellite sat : satellites) {
+                // add vehicles (dummy - should be configurable from file etc)
+                for (int i = 1; i <= 5; i++) {
+                    sat.addVehicle(new Vehicle(sat.getId() * 100 + i, 50, 1d));
+                }
+            }
 
             // print all nodes
 
-            System.out.println("# All depots:");
+            System.out.println("\"All depots:\"");
             depots.forEach(System.out::println);
             System.out.println();
-            System.out.println("# All satellites:");
+            System.out.println("\"All satellites:\"");
             satellites.forEach(System.out::println);
             System.out.println();
-            System.out.println("# All customers:");
+            System.out.println("\"All customers:\"");
             customers.forEach(System.out::println);
             System.out.println();
-
-            // find each customer's nearest satellite
-
-            for (Node cust: customers) {
-                // - find nearest satellite
-                Node.Satellite nearestSat = satellites.stream()
-                        .map(s -> (Node.Satellite) s)
-                        .reduce((n1, n2) -> world.distance(cust, n1) < world.distance(cust, n2) ? n1 : n2)
-                        .get();
-                nearestSat.addCustomer((Node.Customer) cust);
-            }
 
             // print each satellite's customers
 
             // - for each satellite...
-            for (Node sat: satellites) {
-                System.out.printf("# Customers for %s:%n", sat);
+            for (Satellite sat : satellites) {
+                System.out.printf("\"Customers for %s:\"%n", sat);
                 // - if there are customers assigned to it, print them all; otherwise print [none]
-                var myCustomers = ((Node.Satellite)sat).listCustomers();
+                List<Customer> myCustomers = sat.listCustomers();
                 if (!myCustomers.isEmpty()) {
                     myCustomers.forEach(System.out::println);
                 } else {
-                    System.out.println("[none]");
+                    System.out.println("(none)");
                 }
                 System.out.println();
             }
 
-            // dummy routing with naive algorithm: first vehicle tries to grab as many customers as possible
-            // in the order of customer.id (not based on shortest path), the next vehicle does the same with
-            // the remaining customers, and so on
+            // greedy strategy: find next closest node
+            BiFunction<Visit, List<Node>, Node> searchNodeStrategy = (visit, nodes) -> nodes.parallelStream()
+                    .min(Comparator.comparingDouble(n -> world.distance(n, visit.getNode())))
+                    .get();
 
-            for (Node sat: satellites) {
-                System.out.printf("# Route for %s:%n", sat);
+            for (Satellite sat : satellites) {
+                System.out.printf("\"Route for %s:\"%n", sat);
 
-                Vehicle v1 = new Vehicle(sat.getId() * 100 + 1, 40);
-                Vehicle v2 = new Vehicle(sat.getId() * 100 + 2, 20);
+                Routes routes = new Routes(sat, searchNodeStrategy);
 
-                BiFunction<List<Vehicle>, List<Node>, List<Route>> strategy = (vs, ns) -> {
-
-                    // implement algorithm here
-
-                    List<Route> candidate = new ArrayList<>();
-
-                    List<Node> remainingNodes = new ArrayList<>(ns);
-                    List<Vehicle> remainingVehicles = new ArrayList<>(vs);
-                    while (!remainingNodes.isEmpty() && !remainingVehicles.isEmpty()) {
-                        Vehicle v = remainingVehicles.remove(0);
-                        List<Node> currentRoute = new ArrayList<>();
-                        currentRoute.add(remainingNodes.get(0));
-                        Visit visit = new Visit(v, remainingNodes.remove(0));
-                        int idx = 0;
-                        while (idx < remainingNodes.size()) {
-                            if ((v.getCapacity() - visit.getLoad()) > remainingNodes.get(idx).getDemand()) {
-                                currentRoute.add(remainingNodes.get(idx));
-                                visit = visit.nextVisit(remainingNodes.remove(idx));
-                            } else {
-                                idx++;
-                            }
-                        }
-                        candidate.add(new Route(v, currentRoute));
-                    }
-                    return candidate;
-                };
-
-                Routes routes = new Routes(
-                        List.of(v1, v2), // available vehicles
-                        ((Node.Satellite) sat).listNodes(), // all nodes to visit (satellite + its customers)
-                        strategy
-                );
                 System.out.println(routes);
                 System.out.println();
             }
-        } catch (IOException e) {
-            System.err.printf("Cannot open file %s%n", fileName);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
             System.exit(-1);
         }
 
