@@ -86,13 +86,13 @@ public class Main {
                 System.out.println();
             }
 
+            // greedy strategy: find next closest node
+            BiFunction<Visit, List<Node>, Node> searchNodeStrategy = (visit, nodes) -> nodes.parallelStream()
+                    .min(Comparator.comparingDouble(n -> world.distance(n, visit.getNode())))
+                    .get();
+
             for (Satellite sat : satellites) {
                 System.out.printf("\"Route for %s:\"%n", sat);
-
-                // greedy strategy: find next closest node
-                BiFunction<Visit, List<Node>, Node> searchNodeStrategy = (visit, nodes) -> nodes.parallelStream()
-                        .min(Comparator.comparingDouble(n -> world.distance(n, visit.getNode())))
-                        .get();
 
                 Routes routes = new Routes(sat, searchNodeStrategy);
 

@@ -26,6 +26,6 @@ public class Vehicle {
 
     @Override
     public String toString() {
-        return String.format("Vehicle id: %d capacity: %2d speed: %2.2f]", id, capacity, speed);
+        return String.format("Vehicle id: %d capacity: %2d speed: %2.2f", id, capacity, speed);
     }
 }

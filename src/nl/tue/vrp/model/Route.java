@@ -88,6 +88,7 @@ public class Route {
     }
 
     private boolean checkTimeHard(Visit currentVisit, Node nextNode) {
+        // TODO implement time constraint check
         return true;
     }
 
