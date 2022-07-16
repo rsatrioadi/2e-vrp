@@ -3,35 +3,35 @@ package nl.tue.vrp.config;
 import java.util.List;
 
 public class WorldConfig {
-    protected List<NodeConfig.DepotConfig> depots;
-    protected List<NodeConfig.SatelliteConfig> satellites;
-    protected List<NodeConfig.CustomerConfig> customers;
+    protected List<DepotConfig> depots;
+    protected List<SatelliteConfig> satellites;
+    protected List<CustomerConfig> customers;
     protected ServicesConfig services;
 
     public WorldConfig() {
     }
 
-    public List<NodeConfig.DepotConfig> getDepots() {
+    public List<DepotConfig> getDepots() {
         return depots;
     }
 
-    public void setDepots(List<NodeConfig.DepotConfig> depotConfigs) {
+    public void setDepots(List<DepotConfig> depotConfigs) {
         this.depots = depotConfigs;
     }
 
-    public List<NodeConfig.SatelliteConfig> getSatellites() {
+    public List<SatelliteConfig> getSatellites() {
         return satellites;
     }
 
-    public void setSatellites(List<NodeConfig.SatelliteConfig> satelliteConfigs) {
+    public void setSatellites(List<SatelliteConfig> satelliteConfigs) {
         this.satellites = satelliteConfigs;
     }
 
-    public List<NodeConfig.CustomerConfig> getCustomers() {
+    public List<CustomerConfig> getCustomers() {
         return customers;
     }
 
-    public void setCustomers(List<NodeConfig.CustomerConfig> customerConfigs) {
+    public void setCustomers(List<CustomerConfig> customerConfigs) {
         this.customers = customerConfigs;
     }
 

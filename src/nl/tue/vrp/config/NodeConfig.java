@@ -43,42 +43,4 @@ public class NodeConfig {
     public void setAvailabilities(TimeWindowConfig[] availabilities) {
         this.availabilities = availabilities;
     }
-
-    public static class DepotConfig extends NodeConfig {
-        protected List<VehicleConfig> vehicles;
-
-        public DepotConfig() {
-            super();
-        }
-
-        public List<VehicleConfig> getVehicles() {
-            return vehicles;
-        }
-
-        public void setVehicles(List<VehicleConfig> vehicleConfigs) {
-            this.vehicles = vehicleConfigs;
-        }
-    }
-
-    public static class SatelliteConfig extends DepotConfig {
-        public SatelliteConfig() {
-            super();
-        }
-    }
-
-    public static class CustomerConfig extends NodeConfig {
-        protected int satelliteID;
-
-        public CustomerConfig() {
-           super();
-        }
-
-        public int getSatelliteID() {
-            return satelliteID;
-        }
-
-        public void setSatelliteID(int satelliteID) {
-            this.satelliteID = satelliteID;
-        }
-    }
 }
