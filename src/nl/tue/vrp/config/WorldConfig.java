@@ -6,7 +6,6 @@ public class WorldConfig {
     protected List<DepotConfig> depots;
     protected List<SatelliteConfig> satellites;
     protected List<CustomerConfig> customers;
-    protected ServicesConfig services;
 
     public WorldConfig() {
     }
@@ -33,13 +32,5 @@ public class WorldConfig {
 
     public void setCustomers(List<CustomerConfig> customerConfigs) {
         this.customers = customerConfigs;
-    }
-
-    public ServicesConfig getServices() {
-        return services;
-    }
-
-    public void setServices(ServicesConfig servicesConfig) {
-        this.services = servicesConfig;
     }
 }
