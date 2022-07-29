@@ -21,6 +21,8 @@ public class Visit {
         this.next = null;
         this.legCost = 0;
         this.accumulatedCost = 0;
+        this.arrivalTime = 0;
+        this.departureTime = 0;
     }
 
     public Vehicle getVehicle() {
@@ -67,6 +69,10 @@ public class Visit {
         v.legCost = node.getLocation().distance(this.getNode().getLocation());
         v.accumulatedCost = this.accumulatedCost + v.legCost;
 
+        int travelTime = (int)Math.ceil(this.node.getLocation().distance(node.getLocation()) / vehicle.speed);
+        int earliestAvailableTime = node.getEarliestAvailableTime(departureTime + travelTime);
+        v.arrivalTime = earliestAvailableTime;
+        v.departureTime = earliestAvailableTime + node.getServiceTime();
         v.updateNextVisitCost(node);
 
         return v;

@@ -88,7 +88,12 @@ public class Route {
     }
 
     private boolean checkTimeHard(Visit currentVisit, Node nextNode) {
-        // TODO implement time constraint check
+        int travelTime = (int)Math.ceil(currentVisit.getNode().getLocation().distance(nextNode.getLocation()) / vehicle.speed);
+        int earliestArrivalTime = currentVisit.getDepartureTime() + travelTime;
+        int earliestAvailableTime = nextNode.getEarliestAvailableTime(earliestArrivalTime);
+        if (earliestAvailableTime == -1) {
+            return false;
+        }
         return true;
     }
 

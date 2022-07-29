@@ -1,15 +1,37 @@
 package nl.tue.vrp.model;
 
+import nl.tue.vrp.config.VehicleConfig;
+
 public class Vehicle {
 
     protected final int id;
     protected final int capacity;
     protected final double speed;
+    protected final int fuelCapacity;
+    protected final int fuelPerDistance;
 
     public Vehicle(int id, int capacity, double speed) {
         this.id = id;
         this.capacity = capacity;
         this.speed = speed;
+        this.fuelCapacity = 0;
+        this.fuelPerDistance = 0;
+    }
+
+    public Vehicle(VehicleConfig config) {
+        this.id = 0;
+        this.capacity = config.getCapacity();
+        this.fuelCapacity = config.getFuelCapacity();
+        this.speed = config.getAverageSpeed();
+        this.fuelPerDistance = config.getFuelPerDistance();
+    }
+
+    public Vehicle(VehicleConfig config, int id) {
+        this.id = id;
+        this.capacity = config.getCapacity();
+        this.fuelCapacity = config.getFuelCapacity();
+        this.speed = config.getAverageSpeed();
+        this.fuelPerDistance = config.getFuelPerDistance();
     }
 
     public int getId() {

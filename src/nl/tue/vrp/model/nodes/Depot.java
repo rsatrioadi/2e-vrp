@@ -1,5 +1,7 @@
 package nl.tue.vrp.model.nodes;
 
+import nl.tue.vrp.config.DepotConfig;
+import nl.tue.vrp.config.VehicleConfig;
 import nl.tue.vrp.model.Vehicle;
 import nl.tue.vrp.model.VehicleOwner;
 
@@ -14,6 +16,13 @@ public class Depot extends Node implements VehicleOwner {
 
     public Depot(int id, int x, int y, int serviceTime) {
         super(id, x, y, 0, serviceTime);
+    }
+
+    public Depot(DepotConfig config) {
+        super(config);
+        for (VehicleConfig vehicleConfig: config.getVehicles()) {
+            vehicles.add(new Vehicle(vehicleConfig));
+        }
     }
 
     public void addVehicle(Vehicle v) {

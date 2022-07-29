@@ -1,5 +1,6 @@
 package nl.tue.vrp.model.nodes;
 
+import nl.tue.vrp.config.SatelliteConfig;
 import nl.tue.vrp.model.Vehicle;
 import nl.tue.vrp.model.VehicleOwner;
 
@@ -15,6 +16,10 @@ public class Satellite extends Node implements VehicleOwner {
 
     public Satellite(int id, int x, int y, int serviceTime) {
         super(id, x, y, 0, serviceTime);
+    }
+
+    public Satellite(SatelliteConfig config) {
+        super(config);
     }
 
     public void addVehicle(Vehicle v) {
@@ -54,6 +59,14 @@ public class Satellite extends Node implements VehicleOwner {
         return customers.stream()
                 .parallel()
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    public void clearCustomers() {
+        customers.clear();
+    }
+
+    public void removeCustomers() {
+        customers.clear();
     }
 
     public List<Node> listNodes() {

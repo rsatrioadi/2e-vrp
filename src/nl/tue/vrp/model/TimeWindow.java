@@ -2,7 +2,7 @@ package nl.tue.vrp.model;
 
 import nl.tue.vrp.config.TimeWindowConfig;
 
-public class TimeWindow {
+public class TimeWindow implements Comparable<TimeWindow> {
     protected final int startTime;
     protected final int endTime;
 
@@ -48,7 +48,18 @@ public class TimeWindow {
         return 0;
     }
 
+    @Override
+    public int compareTo(TimeWindow time) {
+        return time.startTime - startTime;
+    }
+
     public boolean isIntersect(TimeWindow window) {
         return !(window.endTime < startTime || window.startTime > endTime);
     }
+
+    @Override
+    public String toString() {
+        return String.format("(start: %d, end: %d)", startTime, endTime);
+    }
+
 }

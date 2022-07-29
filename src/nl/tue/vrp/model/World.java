@@ -1,16 +1,19 @@
 package nl.tue.vrp.model;
 
+import nl.tue.vrp.config.*;
 import nl.tue.vrp.model.nodes.Customer;
 import nl.tue.vrp.model.nodes.Depot;
 import nl.tue.vrp.model.nodes.Node;
 import nl.tue.vrp.model.nodes.Satellite;
+import nl.tue.vrp.strategy.customerassignment.CustomerAssignment;
+import nl.tue.vrp.util.IDManager;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class World {
 
@@ -110,6 +113,74 @@ public class World {
         this(fileName, ",", true);
     }
 
+    public World(WorldConfig config) throws IllegalArgumentException {
+        nodes = new ArrayList<>();
+        for (DepotConfig depotConfig : config.getDepots()) {
+            if (depotConfig.getId() == 0) {
+                throw new IllegalArgumentException("depot id is empty");
+            }
+            Depot depot = new Depot(depotConfig);
+            if (!IDManager.getInstance().registerID(depot.getId(), depot)) {
+                throw new IllegalArgumentException(String.format("duplicate id (%d) in depot", depotConfig.getId()));
+            }
+            nodes.add(depot);
+        }
+        for (SatelliteConfig satelliteConfig : config.getSatellites()) {
+            if (satelliteConfig.getId() == 0) {
+                throw new IllegalArgumentException("satellite id is empty");
+            }
+            Satellite satellite = new Satellite(satelliteConfig);
+            if (!IDManager.getInstance().registerID(satellite.getId(), satellite)) {
+                throw new IllegalArgumentException(String.format("duplicate id (%d) in satellite", satelliteConfig.getId()));
+            }
+            nodes.add(satellite);
+        }
+        for (CustomerConfig customerConfig : config.getCustomers()) {
+            if (customerConfig.getId() == 0) {
+                throw new IllegalArgumentException("satellite id is empty");
+            }
+            Customer customer = new Customer(customerConfig);
+            if (!IDManager.getInstance().registerID(customer.getId(), customer)) {
+                throw new IllegalArgumentException(String.format("duplicate id (%d) in satellite", customerConfig.getId()));
+            }
+            customer.setDepot((Depot) IDManager.getInstance().getObject(customerConfig.getDepotID()));
+            nodes.add(customer);
+        }
+
+
+        // Add vehicles after adding all nodes to avoid duplicate id
+        for (DepotConfig depotConfig : config.getDepots()) {
+            Depot depot = (Depot) IDManager.getInstance().getObject(depotConfig.getId());
+            if (depot == null) {
+                throw new IllegalStateException("depot id not found when building world");
+            }
+            for (VehicleConfig vehicleConfig : depotConfig.getVehicles()) {
+                IntStream.rangeClosed(1, vehicleConfig.getCount()).forEach(value -> {
+                    Vehicle vehicle = new Vehicle(vehicleConfig,
+                            IDManager.getInstance().getNewID());
+                    depot.addVehicle(vehicle);
+                });
+            }
+        }
+
+        for (SatelliteConfig satelliteConfig : config.getSatellites()) {
+            Satellite satellite = (Satellite) IDManager.getInstance().getObject(satelliteConfig.getId());
+            if (satellite == null) {
+                throw new IllegalStateException("satellite id not found when building world");
+            }
+            for (VehicleConfig vehicleConfig : satelliteConfig.getVehicles()) {
+                IntStream.rangeClosed(1, vehicleConfig.getCount()).forEach(value -> {
+                    Vehicle vehicle = new Vehicle(vehicleConfig,
+                            IDManager.getInstance().getNewID());
+                    IDManager.getInstance().assignExistingID(vehicle.getId(), vehicle);
+                    satellite.addVehicle(vehicle);
+                });
+            }
+        }
+
+        calculateDistances();
+    }
+
     private void calculateDistances() {
         int length = this.nodes.stream()
                 .parallel()
@@ -133,6 +204,26 @@ public class World {
                     .parallel()
                     .reduce((n1, n2) -> distance(cust, n1) < distance(cust, n2) ? n1 : n2)
                     .get();
+            nearestSat.addCustomer(cust);
+        }
+    }
+
+    private void findNearestSatellites(CustomerAssignment strategy) {
+        // find each customer's nearest satellite
+        List<Satellite> satellites = satellites();
+        for (Customer cust : customers()) {
+            Satellite nearestSat = strategy.getAssignedSatellite(cust, satellites);
+            nearestSat.addCustomer(cust);
+        }
+    }
+
+    public void applyCustomerAssignment(CustomerAssignment strategy) {
+        List<Satellite> satellites = satellites();
+        for (Satellite satellite : satellites) {
+            satellite.clearCustomers();
+        }
+        for (Customer cust : customers()) {
+            Satellite nearestSat = strategy.getAssignedSatellite(cust, satellites);
             nearestSat.addCustomer(cust);
         }
     }
