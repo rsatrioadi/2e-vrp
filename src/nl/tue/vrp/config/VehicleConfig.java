@@ -3,7 +3,7 @@ package nl.tue.vrp.config;
 public class VehicleConfig {
     protected int capacity;
     protected int fuelCapacity;
-    protected int averageSpeed;
+    protected double averageSpeed;
     protected int fuelPerDistance;
     protected int count;
 
@@ -26,11 +26,11 @@ public class VehicleConfig {
         this.fuelCapacity = fuelCapacity;
     }
 
-    public int getAverageSpeed() {
+    public double getAverageSpeed() {
         return averageSpeed;
     }
 
-    public void setAverageSpeed(int averageSpeed) {
+    public void setAverageSpeed(double averageSpeed) {
         this.averageSpeed = averageSpeed;
     }
 

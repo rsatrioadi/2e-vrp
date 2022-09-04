@@ -7,7 +7,7 @@ public class NodeConfig {
     protected int id;
     protected Point location;
     protected int serviceTime;
-    protected TimeWindowConfig[] availabilities;
+    protected TimeWindowConfig availability;
 
     protected NodeConfig() {
     }
@@ -36,11 +36,11 @@ public class NodeConfig {
         this.serviceTime = serviceTime;
     }
 
-    public TimeWindowConfig[] getAvailabilities() {
-        return availabilities;
+    public TimeWindowConfig getAvailability() {
+        return availability;
     }
 
-    public void setAvailabilities(TimeWindowConfig[] availabilities) {
-        this.availabilities = availabilities;
+    public void setAvailability(TimeWindowConfig availability) {
+        this.availability = availability;
     }
 }
