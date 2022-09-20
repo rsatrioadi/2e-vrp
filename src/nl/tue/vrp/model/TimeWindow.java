@@ -1,6 +1,7 @@
 package nl.tue.vrp.model;
 
 import nl.tue.vrp.config.TimeWindowConfig;
+import nl.tue.vrp.output.TimeWindowOutput;
 
 public class TimeWindow implements Comparable<TimeWindow> {
     protected final int startTime;
@@ -62,4 +63,10 @@ public class TimeWindow implements Comparable<TimeWindow> {
         return String.format("(start: %d, end: %d)", startTime, endTime);
     }
 
+    public TimeWindowOutput toOutput() {
+        TimeWindowOutput out = new TimeWindowOutput();
+        out.setStartTime(startTime);
+        out.setEndTime(endTime);
+        return out;
+    }
 }

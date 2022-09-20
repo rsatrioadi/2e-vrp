@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="twoe-vrp:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/twoe_vrp_jar</output-path>
+    <root id="archive" name="twoe-vrp.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="2e-vrp" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/yaml/snakeyaml/1.30/snakeyaml-1.30.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

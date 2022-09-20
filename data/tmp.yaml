@@ -1,0 +1,9 @@
+!!nl.tue.vrp.model.World
+customers:
+  - location:
+      x: 1
+      y: 2
+depots:
+  - location:
+      x: 1
+      y: 3

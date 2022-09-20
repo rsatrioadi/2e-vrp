@@ -1,0 +1,72 @@
+depots:
+  - id: 1
+    location:
+      x: 2
+      y: 33
+    vehicles:
+      - capacity: 1000
+        averageSpeed: 10
+        count: 1
+satellites:
+  - id: 2
+    location:
+      x: 20
+      y: 7
+    vehicles:
+      - capacity: 30
+        averageSpeed: 5
+        count: 1
+  - id: 3
+    location:
+      x: -12
+      y: 17
+    serviceTime: 10
+    vehicles:
+      - capacity: 1000
+        averageSpeed: 4
+        count: 1
+customers:
+  - id: 4
+    location:
+      x: 4
+      y: 10
+    availability:
+      start: 54
+      end: 74
+    type: "delivery"
+    serviceTime: 10
+    demand: 20
+    depotID: 1
+  - id: 5
+    location:
+      x: -22
+      y: -3
+    availability:
+      start: 90
+      end: 110
+    demand: 20
+    depotID: 1
+    serviceTime: 10
+    type: "delivery"
+  - id: 6
+    location:
+      x: -7
+      y: -8
+    availability:
+      start: 78
+      end: 98
+    demand: 20
+    depotID: 1
+    serviceTime: 10
+    type: "delivery"
+  - id: 7
+    location:
+      x: -1
+      y: -7
+    availability:
+      start: 238
+      end: 256
+    demand: 20
+    depotID: 1
+    serviceTime: 10
+    type: "delivery"

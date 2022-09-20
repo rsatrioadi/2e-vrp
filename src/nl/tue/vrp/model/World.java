@@ -6,6 +6,7 @@ import nl.tue.vrp.model.nodes.Depot;
 import nl.tue.vrp.model.nodes.Node;
 import nl.tue.vrp.model.nodes.Satellite;
 import nl.tue.vrp.strategy.customerassignment.CustomerAssignment;
+import nl.tue.vrp.strategy.packageassignment.PackageAssignment;
 import nl.tue.vrp.util.IDManager;
 
 import java.io.BufferedReader;
@@ -40,6 +41,7 @@ public class World {
                 records.add(values);
             }
             List<Node> nodes = new ArrayList<>();
+            List<Package> packages = new ArrayList<>();
             List<String[]> depotRecs = records.stream()
                     .parallel()
                     .filter(r -> r[0].equalsIgnoreCase("Depot"))
@@ -137,13 +139,12 @@ public class World {
         }
         for (CustomerConfig customerConfig : config.getCustomers()) {
             if (customerConfig.getId() == 0) {
-                throw new IllegalArgumentException("satellite id is empty");
+                throw new IllegalArgumentException("customer id is empty");
             }
-            Customer customer = new Customer(customerConfig);
+            Customer customer = new Customer(customerConfig, (Depot) IDManager.getInstance().getObject(customerConfig.getDepotID()));
             if (!IDManager.getInstance().registerID(customer.getId(), customer)) {
                 throw new IllegalArgumentException(String.format("duplicate id (%d) in satellite", customerConfig.getId()));
             }
-            customer.setDepot((Depot) IDManager.getInstance().getObject(customerConfig.getDepotID()));
             nodes.add(customer);
         }
 
@@ -198,34 +199,39 @@ public class World {
     private void findNearestSatellites() {
         // find each customer's nearest satellite
 
-        for (Customer cust : customers()) {
+        for (Customer customer : customers()) {
             // - find nearest satellite
             Satellite nearestSat = satellites().stream()
                     .parallel()
-                    .reduce((n1, n2) -> distance(cust, n1) < distance(cust, n2) ? n1 : n2)
+                    .reduce((n1, n2) -> distance(customer, n1) < distance(customer, n2) ? n1 : n2)
                     .get();
-            nearestSat.addCustomer(cust);
+            nearestSat.addPackage(customer.getPackageAvailability());
         }
     }
 
-    private void findNearestSatellites(CustomerAssignment strategy) {
-        // find each customer's nearest satellite
-        List<Satellite> satellites = satellites();
-        for (Customer cust : customers()) {
-            Satellite nearestSat = strategy.getAssignedSatellite(cust, satellites);
-            nearestSat.addCustomer(cust);
-        }
-    }
+//    private void findNearestSatellites(CustomerAssignment strategy) {
+//        // find each customer's nearest satellite
+//        List<Satellite> satellites = satellites();
+//        for (Customer cust : customers()) {
+//            Satellite nearestSat = strategy.getAssignedSatellite(cust, satellites);
+//            nearestSat.addCustomer(cust);
+//        }
+//    }
 
-    public void applyCustomerAssignment(CustomerAssignment strategy) {
+    public void applyPackageAssignment(PackageAssignment strategy) {
         List<Satellite> satellites = satellites();
         for (Satellite satellite : satellites) {
-            satellite.clearCustomers();
+            satellite.clearPackages();
         }
-        for (Customer cust : customers()) {
-            Satellite nearestSat = strategy.getAssignedSatellite(cust, satellites);
-            nearestSat.addCustomer(cust);
+        for (Customer customer : customers()) {
+            PackageAvailability aPackage = customer.getPackageAvailability();
+            Satellite nearestSat = strategy.getAssignedSatellite(aPackage, satellites);
+            nearestSat.addPackage(aPackage);
         }
+    }
+
+    public Node getNode(int id) {
+        return (Node) IDManager.getInstance().getObject(id);
     }
 
     public List<Depot> depots() {
@@ -241,7 +247,7 @@ public class World {
                 .parallel()
                 .filter(node -> node instanceof Satellite)
                 .map(node -> (Satellite) node)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     public List<Customer> customers() {
@@ -249,7 +255,13 @@ public class World {
                 .parallel()
                 .filter(node -> node instanceof Customer)
                 .map(node -> (Customer) node)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
+    }
+
+    public List<Package> packages() {
+        return customers().stream()
+                .parallel().map(Customer::getPackage)
+                .collect(Collectors.toList());
     }
 
     public double distance(Node n1, Node n2) {
