@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="twoevrpp">
+    <output-path>$PROJECT_DIR$/out/artifacts/twoevrpp</output-path>
+    <root id="archive" name="twoevrpp.jar">
+      <element id="module-output" name="2e-vrp" />
+    </root>
+  </artifact>
+</component>

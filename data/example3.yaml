@@ -1,0 +1,32 @@
+depots:
+  - id: 1
+    location:
+      x: 2
+      y: 33
+    vehicles:
+      - capacity: 1000
+        averageSpeed: 10
+        fuelCapacity: 100
+        fuelPerDistance: 2
+        count: 1
+satellites:
+  - id: 2
+    location:
+      x: 20
+      y: 7
+    vehicles:
+      - capacity: 30
+        averageSpeed: 5
+        count: 1
+customers:
+  - id: 3
+    location:
+      x: 4
+      y: 10
+    availability:
+      start: 54
+      end: 74
+    type: "delivery"
+    serviceTime: 10
+    demand: 20
+    depotID: 1

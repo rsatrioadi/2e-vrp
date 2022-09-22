@@ -6,6 +6,7 @@ depots:
     vehicles:
       - capacity: 1000
         averageSpeed: 10
+        count: 1
   - id: 2
     location:
       x: -35
@@ -13,6 +14,7 @@ depots:
     vehicles:
       - capacity: 1000
         averageSpeed: 10
+        count: 1
 satellites:
   - id: 3
     location:
@@ -21,6 +23,7 @@ satellites:
     vehicles:
       - capacity: 30
         averageSpeed: 5
+        count: 1
   - id: 4
     location:
       x: -12
@@ -29,6 +32,7 @@ satellites:
     vehicles:
       - capacity: 1000
         averageSpeed: 4
+        count: 1
   - id: 5
     location:
       x: 25
@@ -37,16 +41,15 @@ satellites:
     vehicles:
       - capacity: 1000
         averageSpeed: 3
+        count: 1
 customers:
   - id: 6
     location:
       x: 4
       y: 10
-    availabilities:
-      - start: 54
-        end: 74
-      - start: 78
-        end: 100
+    availability:
+      start: 54
+      end: 74
     type: "delivery"
     serviceTime: 10
     demand: 20
@@ -55,9 +58,9 @@ customers:
     location:
       x: -22
       y: -3
-    availabilities:
-      - start: 90
-        end: 110
+    availability:
+      start: 90
+      end: 110
     demand: 20
     depotID: 2
     serviceTime: 10
@@ -66,9 +69,9 @@ customers:
     location:
       x: -7
       y: -8
-    availabilities:
-      - start: 78
-        end: 98
+    availability:
+      start: 78
+      end: 98
     demand: 20
     depotID: 1
     serviceTime: 10
@@ -77,9 +80,9 @@ customers:
     location:
       x: -1
       y: -7
-    availabilities:
-      - start: 238
-        end: 256
+    availability:
+      start: 238
+      end: 256
     demand: 20
     depotID: 2
     serviceTime: 10
@@ -88,9 +91,9 @@ customers:
     location:
       x: -8
       y: -12
-    availabilities:
-      - start: 30
-        end: 50
+    availability:
+      start: 30
+      end: 50
     demand: 20
     depotID: 1
     serviceTime: 10
@@ -99,9 +102,9 @@ customers:
     location:
       x: -14
       y: 9
-    availabilities:
-      - start: 220
-        end: 240
+    availability:
+      start: 220
+      end: 240
     demand: 20
     depotID: 1
     serviceTime: 10
@@ -110,9 +113,9 @@ customers:
     location:
       x: -1
       y: 1
-    availabilities:
-      - start: 232
-        end: 252
+    availability:
+      start: 232
+      end: 252
     demand: 20
     depotID: 2
     serviceTime: 10
@@ -121,9 +124,9 @@ customers:
     location:
       x: -8
       y: 18
-    availabilities:
-      - start: 133
-        end: 153
+    availability:
+      start: 133
+      end: 153
     demand: 10
     depotID: 2
     serviceTime: 10
@@ -132,9 +135,9 @@ customers:
     location:
       x: -4
       y: -6
-    availabilities:
-      - start: 243
-        end: 263
+    availability:
+      start: 243
+      end: 263
     demand: 20
     depotID: 2
     serviceTime: 10
@@ -143,9 +146,9 @@ customers:
     location:
       x: -2
       y: 26
-    availabilities:
-      - start: 92
-        end: 112
+    availability:
+      start: 92
+      end: 112
     demand: 10
     depotID: 1
     serviceTime: 10
@@ -154,9 +157,9 @@ customers:
     location:
       x: 7
       y: -2
-    availabilities:
-      - start: 193
-        end: 213
+    availability:
+      start: 193
+      end: 213
     demand: 10
     depotID: 1
     serviceTime: 10
@@ -165,9 +168,9 @@ customers:
     location:
       x: 0
       y: 2
-    availabilities:
-      - start: 59
-        end: 79
+    availability:
+      start: 59
+      end: 79
     demand: 10
     depotID: 2
     serviceTime: 10
@@ -176,9 +179,9 @@ customers:
     location:
       x: -28
       y: 1
-    availabilities:
-      - start: 152
-        end: 172
+    availability:
+      start: 152
+      end: 172
     demand: 20
     depotID: 1
     serviceTime: 10
@@ -187,9 +190,9 @@ customers:
     location:
       x: 6
       y: -1
-    availabilities:
-      - start: 84
-        end: 104
+    availability:
+      start: 84
+      end: 104
     demand: 10
     depotID: 1
     serviceTime: 10
@@ -198,9 +201,9 @@ customers:
     location:
       x: 10
       y: -19
-    availabilities:
-      - start: 180
-        end: 200
+    availability:
+      start: 180
+      end: 200
     demand: 10
     depotID: 2
     serviceTime: 10

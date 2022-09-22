@@ -1,0 +1,42 @@
+depots:
+  - id: 1
+    location:
+      {x: 0, y: 0}
+    vehicles:
+      - capacity: 100
+        averageSpeed: 10
+        count: 1
+satellites:
+  - id: 2
+    location:
+      {x: 10, y: 0}
+    vehicles:
+      - capacity: 40
+        averageSpeed: 10
+        count: 1
+  - id: 3
+    location:
+      {x: -10, y: 0}
+    vehicles:
+      - capacity: 40
+        averageSpeed: 10
+        count: 1
+customers:
+  - id: 4
+    location:
+      {x: 0, y: 10}
+    availability:
+      {start: 100, end: 1000}
+    type: "pickup"
+    serviceTime: 10
+    demand: 10
+    depotID: 1
+  - id: 5
+    location:
+      {x: 0, y: -10}
+    availability:
+      {start: 0, end: 0}
+    type: "delivery"
+    serviceTime: 10
+    demand: 5
+    depotID: 1

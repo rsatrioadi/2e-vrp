@@ -1,6 +1,9 @@
 package nl.tue.vrp.model;
 
 import nl.tue.vrp.config.VehicleConfig;
+import nl.tue.vrp.output.VehicleOutput;
+
+import javax.management.BadBinaryOpValueExpException;
 
 public class Vehicle {
 
@@ -46,8 +49,25 @@ public class Vehicle {
         return speed;
     }
 
+    public int getFuelCapacity() {
+        return fuelCapacity;
+    }
+
+    public int getFuelPerDistance() {
+        return fuelPerDistance;
+    }
+
     @Override
     public String toString() {
         return String.format("Vehicle id: %d capacity: %2d speed: %2.2f", id, capacity, speed);
+    }
+
+    public VehicleOutput toOutput() {
+        VehicleOutput out = new VehicleOutput();
+        out.setAverageSpeed(speed);
+        out.setFuelCapacity(fuelCapacity);
+        out.setId(id);
+        out.setFuelPerDistance(fuelPerDistance);
+        return out;
     }
 }

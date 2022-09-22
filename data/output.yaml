@@ -1,0 +1,32 @@
+totalDistance: 1000
+totalFuelUsed: 1234
+timeFinished: 123
+satisfied: true
+depots:
+  - id: 1
+    location:
+      x: 1
+      y: 2
+    satisfied: true
+    routes:
+      - vehicleID: x
+        averageSpeed: x
+        totalDistance: x
+        totalFuelUsed: x
+        route:
+          - nodeID: x
+            arrivalTime: 0
+            departureTime: 0
+            fuelUsed: 0
+satellites:
+  - id: 1
+    vehicles:
+      - vehicleID: 10
+        totalDistance: 1000
+        totalFuelUsed: 123
+        Satisfied: true
+        Routes:
+          - NodeID: 2
+            Distance: 10
+            TimeArrive: 6
+            FuelUsed: 10
